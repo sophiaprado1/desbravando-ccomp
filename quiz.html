@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Desbravando a Computação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: black;
+            overflow-x: hidden;
+        }
+
+        /* Cabeçalho com espaço para logomarca */
+        .header {
+            position: flex;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-image {
+            max-height: 180px;
+            max-width: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        /* Container principal */
+        .main-container {
+            margin-top: 0px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 140px);
+            justify-content: center;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2b1045;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .title p {
+            font-size: 1.2rem;
+            color: #2b1045;
+            opacity: 0.8;
+        }
+
+        /* Container do Quiz */
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border: 3px solid #2b1045;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(43, 16, 69, 0.1);
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2b1045;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #2b1045;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(180, 0, 104, 0.1);
+            transition: left 0.6s ease;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            transform: translateY(-3px);
+            border-color: #b40068;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .option label {
+            font-size: 1.1rem;
+            color: #2b1045;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            font-weight: 500;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.2);
+            accent-color: #b40068;
+        }
+
+        /* Botão de resultado */
+        .result-button {
+            background: #2b1045;
+            border: 3px solid #b40068;
+            border-radius: 20px;
+            padding: 20px 40px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+        }
+
+        .result-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 0, 0.2);
+            transition: left 0.6s ease;
+        }
+
+        .result-button:hover::before {
+            left: 100%;
+        }
+
+        .result-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: #ffff00;
+            background: #b40068;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Botão de voltar */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #2b1045;
+            border: 2px solid #b40068;
+            border-radius: 15px;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .back-button:hover {
+            background: #b40068;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efeitos de fundo animados */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: #2b1045;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+            opacity: 0.05;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: #b40068;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+            opacity: 0.03;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: #00e282;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+            opacity: 0.05;
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(0px) rotate(180deg); }
+            75% { transform: translateY(-15px) rotate(270deg); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .title h1 {
+                font-size: 2.2rem;
+            }
+            
+            .quiz-container {
+                padding: 25px;
+                margin: 0 10px;
+            }
+            
+            .question h3 {
+                font-size: 1.3rem;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+            
+            .option label {
+                font-size: 1rem;
+            }
+            
+            .logo-container {
+                height: 60px;
+            }
+            
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .title p {
+                font-size: 1rem;
+            }
+            
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            .question h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Formas animadas de fundo -->
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Botão de voltar -->
+    <a href="index.html" class="back-button">← Voltar</a>
+
+    <!-- Cabeçalho com espaço para logomarca -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo Desbravando a Computação" class="logo-image">
+        </div>
+    </header>
+
+    <!-- Container principal -->
+    <main class="main-container">
+        <div class="title">
+            <h1>Quiz - Personalidade da Computação</h1>
+            <p>Responda às perguntas e some os pontos das alternativas escolhidas. No final, descubra com qual personalidade da computação você mais se parece!</p>
+        </div>
+
+        <div class="quiz-container">
+            <form id="quizForm">
+                <div class="question">
+                    <h3>1. Quando surge um problema difícil, o que você faz?</h3>
+                    <div class="options">
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q1" value="3">
+                                A) Analiso a fundo, escrevo tudo e penso passo a passo. (+3)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q1" value="2">
+                                B) Testo soluções diferentes rapidamente até encontrar algo que funcione. (+2)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q1" value="1">
+                                C) Tento entender o contexto maior antes de agir. (+1)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q1" value="4">
+                                D) Me inspiro em outras soluções que já vi por aí. (+4)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>2. Qual dessas áreas mais te atrai?</h3>
+                    <div class="options">
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q2" value="2">
+                                A) Inteligência Artificial e aprendizado de máquina. (+2)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q2" value="1">
+                                B) Sistemas e redes complexas. (+1)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q2" value="3">
+                                C) Criptografia e segurança. (+3)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q2" value="4">
+                                D) Interação humano-computador e design de software. (+4)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>3. Como você lida com trabalho em equipe?</h3>
+                    <div class="options">
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q3" value="3">
+                                A) Prefiro trabalhar sozinho, com foco total. (+3)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q3" value="1">
+                                B) Gosto de colaborar, mas mantenho autonomia. (+1)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q3" value="4">
+                                C) Adoro trocar ideias e aprender com o grupo. (+4)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q3" value="2">
+                                D) Me adapto conforme o projeto exige. (+2)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>4. Se você fosse um personagem de RPG, qual seria sua classe?</h3>
+                    <div class="options">
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q4" value="3">
+                                A) Mago — estudioso, estratégico e poderoso. (+3)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q4" value="2">
+                                B) Ladino — ágil, criativo e bom em explorar sistemas. (+2)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q4" value="4">
+                                C) Bardo — comunicativo, encantador e carismático. (+4)
+                            </label>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="q4" value="1">
+                                D) Guerreiro — direto, prático e sempre pronto para a ação. (+1)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <center>
+                    <button type="button" class="result-button" onclick="calculateResult()">
+                        Ver Meu Resultado
+                    </button>
+                </center>
+            </form>
+
+            <div id="result" style="display: none; margin-top: 30px; padding: 30px; background: #f8f9fa; border-radius: 15px; border: 2px solid #2b1045;">
+                <h3 style="color: #2b1045; margin-bottom: 15px;">Seu Resultado:</h3>
+                <p id="resultText" style="font-size: 1.1rem; color: #2b1045; line-height: 1.6;"></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function calculateResult() {
+            const form = document.getElementById('quizForm');
+            const formData = new FormData(form);
+            
+            // Verifica se todas as 4 perguntas foram respondidas
+            const q1 = formData.get('q1');
+            const q2 = formData.get('q2');
+            const q3 = formData.get('q3');
+            const q4 = formData.get('q4');
+            
+            if (!q1 || !q2 || !q3 || !q4) {
+                alert('Por favor, responda todas as perguntas antes de ver o resultado!');
+                return;
+            }
+            
+            // Soma todos os pontos
+            let totalScore = parseInt(q1) + parseInt(q2) + parseInt(q3) + parseInt(q4);
+            
+            let resultText = '';
+            
+            // Determina o resultado baseado na pontuação
+            if (totalScore >= 4 && totalScore <= 6) {
+                resultText = '<strong>🔵 Linus Torvalds</strong><br><br>Você é prático, direto ao ponto e gosta de colocar a mão na massa. Prefere soluções eficientes e tem espírito hacker. Provavelmente vai amar áreas como sistemas operacionais ou engenharia de software.<br><br><strong>Sua pontuação: ' + totalScore + ' pontos</strong>';
+            } else if (totalScore >= 7 && totalScore <= 10) {
+                resultText = '<strong>🟨 Alan Turing</strong><br><br>Você gosta de lógica, desafios complexos e pensamento matemático. Tem vocação para a base teórica da computação, como criptografia, algoritmos ou IA.<br><br><strong>Sua pontuação: ' + totalScore + ' pontos</strong>';
+            } else if (totalScore >= 11 && totalScore <= 13) {
+                resultText = '<strong>🟩 Ada Lovelace</strong><br><br>Você tem visão criativa e espírito pioneiro. Se interessa por novas possibilidades e gosta de conectar computação com outras áreas. Tem perfil inovador, ideal para pesquisa e desenvolvimento.<br><br><strong>Sua pontuação: ' + totalScore + ' pontos</strong>';
+            } else if (totalScore >= 14 && totalScore <= 16) {
+                resultText = '<strong>🟣 Grace Hopper</strong><br><br>Você é comunicativo, lidera bem e tem interesse tanto pela teoria quanto pela prática. Pode se destacar em desenvolvimento, design de linguagens ou educação em tecnologia.<br><br><strong>Sua pontuação: ' + totalScore + ' pontos</strong>';
+            } else {
+                resultText = 'Erro: Pontuação inválida (' + totalScore + ' pontos). Tente novamente.';
+            }
+            
+            // Exibe o resultado
+            document.getElementById('resultText').innerHTML = resultText;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

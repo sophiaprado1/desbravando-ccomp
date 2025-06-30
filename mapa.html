@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa 3D UFT - Desbravando a Computação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: black;
+            overflow-x: hidden;
+        }
+
+        /* Cabeçalho com espaço para logomarca */
+        .header {
+            position: flex;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-image {
+            max-height: 180px;
+            max-width: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        /* Container principal */
+        .main-container {
+            margin-top: 0px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 140px);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2b1045;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .title p {
+            font-size: 1.2rem;
+            color: #2b1045;
+            opacity: 0.8;
+        }
+
+        /* Container do Mapa 3D */
+        .map-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border: 3px solid #2b1045;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(43, 16, 69, 0.1);
+            animation: fadeInUp 1s ease 0.3s both;
+            margin-bottom: 20px;
+        }
+
+        .map-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Informações sobre o mapa */
+        .map-info {
+            max-width: 1200px;
+            width: 100%;
+            background: #f8f9fa;
+            border: 2px solid #2b1045;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        .map-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2b1045;
+            margin-bottom: 15px;
+        }
+
+        .map-info p {
+            font-size: 1.1rem;
+            color: #2b1045;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .map-info ul {
+            margin-left: 20px;
+            color: #2b1045;
+        }
+
+        .map-info li {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Botão de voltar */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #2b1045;
+            border: 2px solid #b40068;
+            border-radius: 15px;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .back-button:hover {
+            background: #b40068;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Botões de controle */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-button {
+            background: #2b1045;
+            border: 2px solid #b40068;
+            border-radius: 15px;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .control-button:hover {
+            background: #b40068;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efeitos de fundo animados */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: #2b1045;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+            opacity: 0.05;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: #b40068;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+            opacity: 0.03;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: #00e282;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+            opacity: 0.05;
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(0px) rotate(180deg); }
+            75% { transform: translateY(-15px) rotate(270deg); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .title h1 {
+                font-size: 2.2rem;
+            }
+            
+            .map-container {
+                padding: 15px;
+                margin: 0 10px;
+            }
+            
+            .map-iframe {
+                height: 400px;
+            }
+            
+            .map-info {
+                padding: 20px;
+                margin: 0 10px;
+            }
+            
+            .logo-container {
+                height: 60px;
+            }
+            
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            .controls {
+                margin: 0 10px 20px 10px;
+            }
+
+            .control-button {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .title p {
+                font-size: 1rem;
+            }
+            
+            .map-container {
+                padding: 10px;
+            }
+            
+            .map-iframe {
+                height: 300px;
+            }
+
+            .map-info {
+                padding: 15px;
+            }
+
+            .map-info h3 {
+                font-size: 1.3rem;
+            }
+
+            .map-info p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(43, 16, 69, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            z-index: 10;
+        }
+
+        .loading-text {
+            color: #2b1045;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .map-wrapper {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Formas animadas de fundo -->
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Botão de voltar -->
+    <a href="index.html" class="back-button">← Voltar</a>
+
+    <!-- Cabeçalho com espaço para logomarca -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo Desbravando a Computação" class="logo-image">
+        </div>
+    </header>
+
+    <!-- Container principal -->
+    <main class="main-container">
+        <div class="title">
+            <h1>Mapa 3D - Campus UFT</h1>
+            <p>Explore o campus da Universidade Federal do Tocantins em um ambiente 3D interativo</p>
+        </div>
+
+        <!-- Controles do mapa -->
+        <div class="controls">
+            <button class="control-button" onclick="toggleFullscreen()">🔍 Tela Cheia</button>
+            <a href="https://sketchfab.com/3d-models/uft112-60efd25d54e140da8401911907d51134" target="_blank" class="control-button">🌐 Ver no Sketchfab</a>
+            <button class="control-button" onclick="reloadMap()">🔄 Recarregar</button>
+        </div>
+
+        <!-- Container do Mapa 3D -->
+        <div class="map-container">
+            <div class="map-wrapper">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-text">⏳ Carregando modelo 3D...</div>
+                </div>
+                <iframe 
+                    id="mapFrame"
+                    class="map-iframe" 
+                    src="https://sketchfab.com/models/60efd25d54e140da8401911907d51134/embed?autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_help=0&ui_settings=0&ui_vr=0&ui_fullscreen=1&ui_annotations=0"
+                    title="Mapa 3D UFT"
+                    frameborder="0" 
+                    allow="autoplay; fullscreen; xr-spatial-tracking" 
+                    xr-spatial-tracking 
+                    execution-while-out-of-viewport 
+                    execution-while-not-rendered 
+                    web-share 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Informações sobre o mapa -->
+        <div class="map-info">
+            <h3>🏛️ Sobre o Campus UFT</h3>
+            <p>Este modelo 3D , criado pelo aluno Zácaro Cerqueira, representa o campus da Universidade Federal do Tocantins (UFT), permitindo uma exploração virtual completa das instalações.</p>
+            
+            <h3>🎮 Como navegar:</h3>
+            <ul>
+                <li><strong>Mouse:</strong> Clique e arraste para rotacionar a câmera</li>
+                <li><strong>Scroll:</strong> Use a roda do mouse para dar zoom in/out</li>
+                <li><strong>Botão direito:</strong> Clique e arraste para mover a câmera</li>
+                <li><strong>Duplo clique:</strong> Foque em um ponto específico</li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        // Remove o overlay de carregamento quando o iframe carregar
+        document.getElementById('mapFrame').addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 2000);
+        });
+
+        // Função para alternar tela cheia
+        function toggleFullscreen() {
+            const iframe = document.getElementById('mapFrame');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+            }
+        }
+
+        // Função para recarregar o mapa
+        function reloadMap() {
+            const iframe = document.getElementById('mapFrame');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            loadingOverlay.style.display = 'flex';
+            iframe.src = iframe.src;
+            
+            setTimeout(function() {
+                loadingOverlay.style.display = 'none';
+            }, 3000);
+        }
+
+        // Adiciona eventos de teclado para navegação
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+                case 'r':
+                case 'R':
+                    reloadMap();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

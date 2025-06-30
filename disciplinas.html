@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disciplinas de Computação - Desbravando a Computação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: black;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Cabeçalho com espaço para logomarca */
+        .header {
+            position: flex;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-image {
+            max-height: 180px;
+            max-width: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        /* Container principal */
+        .container {
+            margin-top: 0px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 140px);
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Título principal */
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2b1045;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Introdução */
+        .intro {
+            background: white;
+            border: 3px solid #2b1045;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .intro h2 {
+            color: #2b1045;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+        }
+
+        .intro h2::before {
+            content: "🎓";
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .intro p {
+            color: #2b1045;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        /* Grade de disciplinas */
+        .disciplinas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .disciplina-card {
+            background: white;
+            border: 3px solid #2b1045;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .disciplina-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #b40068;
+        }
+
+        .disciplina-card h3 {
+            color: #2b1045;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+        }
+
+        .disciplina-card h3::before {
+            content: "📚";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .disciplina-card p {
+            color: #2b1045;
+            margin-bottom: 10px;
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        .disciplina-card strong {
+            color: #b40068;
+            font-weight: 800;
+        }
+
+        /* Botão de retorno */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2b1045;
+            border: 3px solid #b40068;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(43, 16, 69, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: #b40068;
+            border-color: #2b1045;
+            box-shadow: 0 12px 25px rgba(180, 0, 104, 0.4);
+        }
+
+        .back-button::before {
+            content: "🏠";
+            font-size: 1.2em;
+        }
+
+        /* Seção de estatísticas */
+        .stats-section {
+            background: #2b1045;
+            border: 3px solid #b40068;
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #b40068;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            color: #00e282;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .stats-section h2 {
+            color: white;
+            font-weight: 800;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.2rem;
+                margin: 20px 0;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .disciplinas-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .disciplina-card {
+                padding: 20px;
+            }
+
+            .intro {
+                padding: 20px;
+            }
+
+            .back-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho com logo -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo UFT" class="logo-image">
+        </div>
+    </div>
+
+    <!-- Título principal -->
+    <div class="title">
+        <h1>Disciplinas de Computação</h1>
+    </div>
+
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Introdução -->
+        <div class="intro">
+            <h2>Estrutura Curricular</h2>
+            <p>O curso de <strong>Ciência da Computação da UFT</strong> oferece uma formação sólida e abrangente, preparando profissionais para atuar nas mais diversas áreas da tecnologia. Nossa grade curricular é cuidadosamente estruturada para proporcionar tanto conhecimentos teóricos fundamentais quanto experiência prática aplicada.</p>
+            <p>Explore abaixo as principais disciplinas que compõem nossa formação.</p>
+        </div>
+
+
+        <!-- Grade de disciplinas -->
+        <div class="disciplinas-grid">
+            
+            <div class="disciplina-card">
+                <h3>Lógica Matemática</h3>
+                <p>Permitirá que o aluno desenvolva o raciocínio lógico aplicado à solução de problemas em nível computacional, além de introduzir os conceitos básicos de desenvolvimento de algoritmos, de forma a propiciar uma visão crítica e sistemática sobre resolução de problemas e prepará-lo para atividades mais complexas de programação. Identificar problemas que tenham solução algorítmica, resolver problemas usando ambientes de programação, etc.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Matemática Discreta</h3>
+                <p>O aluno aprenderá métodos de demonstração, teoria dos conjuntos, relações e funções, ordens parciais completas, relações de recorrência, teoria dos números, teoria dos grafos e Árvores. Apresentar conceitos de matemática discreta, prezando pelo raciocínio e aspecto matemático formais. Desenvolver raciocínio abstrato lógico-matemático, abordar problemas aplicados, por meio da matemática discreta, propondo naturalmente novas tecnologias como soluções plausíveis.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Empreendedorismo</h3>
+                <p>O aluno estudará história do empreendedorismo com ênfase em empresas de tecnologias e seus impactos na sociedade. Introdução ao empreendedorismo e inovação com foco em tecnologias computacionais, empreender e exercer liderança, coordenação e supervisão na área de Tecnologia da Informação. Perfil empreendedor e inovador em computação, a importância da comunicação profissional no empreendedorismo.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Estrutura de Dados I e II</h3>
+                <p>O aluno estudará vetores, listas, pilhas e filas. Aprende a manipular essas estruturas com algoritmos básicos e análise de complexidade. Aprenderá árvores, grafos e tabelas hash, algoritmos de busca, ordenação e percursos em estruturas complexas. Desenvolverá raciocínio lógico e eficiência na resolução de problemas.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Metodologia Científica</h3>
+                <p>Ensinará ética em Pesquisa, elaboração de projeto de pesquisa, revisão sistemática. Tratamento de dados experimentais: medição, sumarização estatística, apresentação e interpretação de dados experimentais. Carga de trabalho (workloads), caracterização e análise, métricas apropriadas adotadas em pesquisa em ciência da computação experimental, projeto experimental, escrita de trabalhos científicos.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Teoria dos Grafos</h3>
+                <p>A disciplina abordará conceitos básicos e definições sobre grafos, representação e manipulação computacional de grafos, análise de algoritmos para teoria dos grafos e demonstração de resultados clássicos acerca de propriedades estruturais de algumas famílias de grafos, árvores, grafos bipartidos, grafos completos, grafos regulares. Conectividade em redes, grafos eulerianos e grafos hamiltonianos, emparelhamentos, cortes, coloração em grafos, condições de planaridade, digrafos, buscas em grafos, caminhos mínimos, árvores geradoras.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Geometria Analítica e Álgebra Linear</h3>
+                <p>Breve histórico do surgimento da Álgebra Linear e suas aplicações, álgebra vetorial: Vetores no IR² e IR³, produto de vetores, interpretação geométrica do módulo do produto de vetores, Ângulo de dois vetores, vetores ortogonais, retas e planos, sistema de equações lineares, espaços vetoriais, transformações lineares, redimensionamento, rotação, reflexão. Aplicação dos Operadores Lineares em Criptografia.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Redes de Computadores</h3>
+                <p>O aluno aprende como dispositivos se comunicam em uma rede. Estudará os modelos OSI e TCP/IP, protocolos como IP, TCP, UDP e HTTP, aprenderá sobre endereçamento IP, roteamento e sub-redes. Também verá como funcionam redes locais (LAN), redes sem fio e segurança de rede. A disciplina prepara o aluno para entender e projetar sistemas de comunicação digital.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Teoria da Computação</h3>
+                <p>O aluno estudará máquinas de turing e teoria da computabilidade para compreender os limites da computação, modelos matemáticos e computacionais equivalentes e a tese de Church-Turing, utilizar a redutibilidade como ferramenta de análise na teoria da computabilidade e na teoria da complexidade computacional. Aplicará conceitos de complexidade computacional e teoria da NP-Completude.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Processamento de Imagens</h3>
+                <p>Possibilitará ao aluno compreender as técnicas que envolvem processamento de imagens digitais com aplicações em diversas áreas (engenharia, a medicina, a geografia etc), conhecer os algoritmos e a teoria matemática envolvida em processos como realce, segmentação e visão computacional (detecção, reconhecimento, reconstrução etc) e apresentar ferramentas úteis para o entendimento e práticas dos objetivos propostos.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Sistemas Operacionais</h3>
+                <p>Introduzirá ao aluno ao estudo de sistemas operacionais, conceito de processo, gerência de processador: escalonamento, concorrência e sincronização de processos, alocação de recursos e deadlocks, gerenciamento de memória, memória virtual, gerenciamento de Arquivos, de dispositivos de entrada e saída, análise de desempenho, sistemas operacionais de rede, sistemas operacionais para arquiteturas de alto desempenho.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Lógica de Programação</h3>
+                <p>O conteúdo abordará noções de algoritmos e programas, dados e instruções. Constantes e variáveis, tipos de dados primitivos, expressões aritméticas e lógicas. Lógica de programação imperativa: estruturas de controle sequencial, de seleção e de repetição. Variáveis compostas homogêneas (vetores e matrizes), variáveis compostas heterogêneas, ponteiros, arquivos. Modularização, passagens de parâmetros por valor e por referência, escopo de variáveis e recursividade.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Prática Extensionista</h3>
+                <p>A matéria produz trabalho e crescimento social através de conhecimento da computação aplicado aos problemas diários, a ideia é que o aluno possa produzir atividades através de projetos e demonstrar o conhecimento para toda a população, é preciso formar projetos criativos para o desenvolvimento acadêmico e de toda a sociedade.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Programação Orientada a Objeto</h3>
+                <p>O estudante aplicará conhecimento adquirido em Lógica de programação, utilizando a linguagem Java para atribuir algoritmos em objetos. Com o término da matéria, o estudante deve compreender e aplicar objeto, classe, interface pública, estado, mensagens, encapsulamento.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Banco de Dados</h3>
+                <p>Nessa matéria, o aluno abordará o conhecimento adquirido em Lógica de programação e Estrutura de Dados, é preciso interagir com camadas lógicas de banco de dados para projetos de esquematização e eficiência em banco de dados bem definidos, para, em seguida, administrá-los com efetividade. Os conceitos serão aplicados e testados em sala.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Sistemas Digitais</h3>
+                <p>É preciso resolver problemas através de ambientes de programação que interligam funções de hardware e software através de conceitos e aplicações para tomada de decisões estratégicas. Ética, legalidade e implicações ambientais serão abordadas, visando o equilíbrio no desenvolvimento de atividades computadorizadas e o meio ambiente a qual existimos.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Organização de Computadores</h3>
+                <p>O conteúdo abordará os conceitos físicos de um computador, apresentando linguagem de montagem, endereçamento e conjunto de instruções, além de conhecimentos relacionados à arquitetura de computadores. O conjunto de conceitos adquiridos durante o curso será importante para compreensão do funcionamento de computadores.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Compiladores</h3>
+                <p>Introdução às teorias e técnicas para construção de compiladores, interpretadores e tradutores de código; análise léxica; análise sintática; tabelas de símbolos; análise semântica; geração de código intermediário; geração e otimização de código de máquina; ambientes em tempo de execução.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Introdução a Ciência da Computação</h3>
+                <p>Abordará conceitos iniciais sobre computadores: hardware e software, Ética profissional, questões do sigilo, restrição da liberdade individual, direitos autorais, impactos sociais e ambientais e LGPD, fundamentos das principais áreas da computação, áreas de atuação, atualidades em informática, profissão, sistemas numéricos, conversão de bases numéricas com sistema binário, aritmética binária básica.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Probabilidade e Estatística</h3>
+                <p>Nesta matéria, o aluno estudará estatística descritiva envolvendo tabelas e gráficos, distribuição de frequências, medidas de posições (médias), mediana, quartis, decis, percentis, moda, medidas de dispersão, medidas de assimetria, medida de curtose. variável aleatória (discreta e contínua), probabilidade, espaço amostral. evento, definição de probabilidades, principais teoremas, probabilidade condicional, teorema do produto, teorema de Bayes.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Cálculos I e II</h3>
+                <p><strong>Cálculos I</strong> - Visa o estudo de contexto Histórico do cálculo diferencial e integral, números reais e suas propriedades, desenvolver a sequência lógica de pensamento na resolução de problemas, aprofundar o estudo do comportamento de funções e derivadas reais de uma variável real, limites de funções reais, função contínua, aplicação de derivadas na física e na otimização, integral indefinida e métodos de Integração, integral definida, aplicação no cálculo de áreas de regiões planas.</p>
+                <p><strong>Cálculos II</strong> - Abordará integração de funções reais e variável real (frações parciais e substituição trigonométrica), sequências infinitas e séries, funções de várias variáveis (Limite, Continuidade, Derivadas Parciais), derivadas direcionais e gradientes, planos tangentes e normais a superfícies, integrais duplas e triplas.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Interface Homem Computador</h3>
+                <p>Visa no conhecimento de introdução ao design de interação, qualidade de uso e usabilidade, acessibilidade, comunicabilidade e princípios de design, design centrado no usuário, requisitos, personas, cenários, fluxo de usuário, arquitetura da informação e moodBoard, prototipação, estilos de interação, exercício prático nas 1° fases do design, e de avaliação de interfaces, introdução à avaliação heurística, por observação e percurso cognitivo, paradigmas e técnicas de avaliação.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Cálculo Numérico</h3>
+                <p>Abordará sistemas numéricos e sua representação, precisão, exatidão e erros em máquinas digitais, zero de funções, resolução de sistemas de equações e numérica de equações diferenciais ordinárias, interpolação e ajuste de curvas, integração numérica, sistemas numéricos e sua representação, precisão, exatidão e erros em máquinas digitais, integração numérica.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Computação Gráfica</h3>
+                <p>Nesta matéria o estudante estudará conceitos básicos de computação gráfica, história, perspectivas de futuro para a área, modelos e primitivas geométricas, sistemas gráficos, sistemas de coordenadas e cores, representação geométrica de curvas e superfícies, modelagem tridimensional, sistemas de modelagem, animação, modificadores no desenvolvimento de projetos com computação gráfica, canal alpha e composição, realismo visual, mapeamento texturais, iluminação, sombreamento, estudo de casos e aplicações.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Linguagens Formais e Autômatos</h3>
+                <p>Abordará símbolo, alfabeto, palavra, linguagem, gramática, relação entre linguagens formais e linguagens naturais, classificação de gramáticas e linguagens pela Hierarquia de Chomsky, linguagens regulares, (autômatos finitos deterministas e não deterministas), gerador (gramáticas regulares) e denotacional (expressões regulares), linguagens livres de contexto (autômatos de pilha) e gerador (gramáticas livres de contexto)etc.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Pesquisa Operacional</h3>
+                <p>Estudos sobre modelos lineares de otimização, programação linear, algoritmo simplex, dualidade, análise de sensibilidade, pós otimização, modelos de redes (Problemas de Transporte, Designação, Caminho Mais Curto, Árvore Geradora Mínima, Fluxo Máximo, Fluxo de Custo Mínimo, PERT/CPM), introdução à programação Inteira, introdução à programação não-linear.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Projeto e Análise de Algoritmos</h3>
+                <p>A matéria abordará medidas de complexidade, análise assintótica de limites de complexidade, técnicas de prova de cotas inferiores, notação Big O, Omega e Theta. Medidas empíricas de performance, uso de relações de recorrência para análise de algoritmos recursivos, análise de algoritmos iterativos e recursivos, técnicas de projeto de algoritmos (método da força bruta, pesquisa exaustiva, algoritmo guloso, dividir e conquistar, backtracking e heurísticas).</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Segurança e Auditoria de Sistemas</h3>
+                <p>Visa no conhecimento de conceitos, ameaças, ataques, ativos, requisitos, arquiteturas, tendências e estratégias para proteção da informação, protocolos e padrões de segurança da rede mundial de computadores, softwares maliciosos, ferramentas criptográficas, sistemas criptográficos de chave simétrica e assimétrica, sistemas de detecção e prevenção de intrusão, ataques de negação de serviço, vulnerabilidades em sistemas web, etc.</p>
+            </div>
+
+            <div class="disciplina-card">
+                <h3>Projeto de Graduação (I e II)</h3>
+                <p><strong>Projeto de Graduação (I)</strong> - Visa no desenvolvimento de um projeto na área de computação sob a supervisão de um professor orientador e com o apoio e monitoração do professor responsável pela disciplina, fazer a proposta do projeto, planejamento, requisitos, escopo, levantar a bibliografia pertinente e atualizado, redigir a fundamentação teórica do projeto, os aspectos práticos desenvolvidos. Apresentar na forma de monografia escrita e oral, com avaliação por bancas de professores.</p>
+                <p><strong>Projeto de Graduação (II)</strong> - Visa no desenvolvimento de um projeto na área de computação a partir de decisões, equilibrando todos os fatores envolvidos, aspectos éticos, legais e impactos ambientais, sob a supervisão de um professor orientador, apoiado e monitorado pelo professor responsável pela disciplina. Fazer a proposta do projeto, planejamento, requisitos, escopo, levantar a bibliografia pertinente e atualizado, redigir a fundamentação teórica do projeto, os aspectos práticos desenvolvidos. Apresentar na forma de monografia oral e escrita, e avaliação realizada por uma banca de professores.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Botão de retorno -->
+    <button class="back-button" onclick="window.location.href='index.html'">
+        Início
+    </button>
+
+    <script>
+        // Animação suave ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.disciplina-card');
+            
+            // Observador para animação quando elementos entram na viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // Configurar animação inicial
+            cards.forEach((card) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
