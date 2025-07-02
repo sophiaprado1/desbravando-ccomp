@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extensões - Desbravando a Computação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: black;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Cabeçalho com espaço para logomarca */
+        .header {
+            position: flex;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-image {
+            max-height: 180px;
+            max-width: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        /* Container principal */
+        .container {
+            margin-top: 0px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 140px);
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Título principal */
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2b1045;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Introdução */
+        .intro {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .intro h2 {
+            color: #2b1045;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+        }
+
+
+        .intro p {
+            color: #2b1045;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Grade de guildas */
+        .guildas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .guilda-card {
+            background: white;
+            border: 3px solid #2b1045;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guilda-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #b40068;
+        }
+
+        .guilda-card h3 {
+            color: #2b1045;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+        }
+
+        .guilda-card.centro h3::before {
+            content: "🛡️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .guilda-card.atletica h3::before {
+            content: "⚽";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .guilda-card.extensao h3::before {
+            content: "🌟";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .guilda-card.empresa h3::before {
+            content: "💼";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .guilda-card p {
+            color: #2b1045;
+            margin-bottom: 10px;
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        .guilda-card strong {
+            color: #b40068;
+            font-weight: 800;
+        }
+
+        /* Botão de retorno */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2b1045;
+            border: 3px solid #b40068;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(43, 16, 69, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: #b40068;
+            border-color: #2b1045;
+            box-shadow: 0 12px 25px rgba(180, 0, 104, 0.4);
+        }
+
+        .back-button::before {
+            content: "🏠";
+            font-size: 1.2em;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .title h1 {
+                font-size: 2.2rem;
+                margin: 20px 0;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .guildas-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .guilda-card {
+                padding: 20px;
+            }
+
+            .intro {
+                padding: 20px;
+            }
+
+            .back-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title h1 {
+                font-size: 1.8rem;
+            }
+
+            .guildas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho com logo -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo UFT" class="logo-image">
+        </div>
+    </div>
+
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Introdução -->
+        <div class="intro">
+            <h2>Entidades estudantis e outros projetos</h2>
+            <p>Não se assuste com a grandiosidade das quests que te aguardam, você não está sozinho! Nesta aventura, existem várias guildas criadas especialmente para te auxiliar nos seus desafios. Conheça algumas delas:</p>
+        </div>
+
+        <!-- Grade de guildas -->
+        <div class="guildas-grid">
+            
+            <div class="guilda-card centro">
+                <h3>CENTRO ACADÊMICO</h3>
+                <p>Guilda de corajosos alunos que se dedicam a proteger e representar os alunos do curso em eventos importantes. Promovem eventos épicos, como a <strong>Game Night</strong>, e têm diretórios focados em questões estudantis específicas. Você sempre pode contar com eles para pedir informações ou buscar ajuda!</p>
+            </div>
+
+            <div class="guilda-card atletica">
+                <h3>ATLÉTICA</h3>
+                <p>Guilda mítica que promove sidequests com um objetivo só: <strong>diversão!</strong> A Atlética tem como objetivo principal promover atividades extracurriculares focadas em atividades físicas ou interações sociais. Não pratica nenhum esporte? Nunca é tarde para começar, mas a Atlética também participa de eventos de e-sports!</p>
+            </div>
+
+            <div class="guilda-card extensao">
+                <h3>PROJETOS DE EXTENSÃO</h3>
+                <p>Um dos pilares da UFT é a <strong>Prática Extensionista</strong>, missões comunitárias onde você pode aplicar seus conhecimentos tecnológicos para resolver problemas da comunidade. São uma oportunidade incrível para obter XP e descobrir várias conquistas secretas, como <strong>cooperatividade e espírito de equipe</strong>.</p>
+            </div>
+
+            <div class="guilda-card empresa">
+                <h3>EMPRESA JÚNIOR</h3>
+                <p>Uma guilda especial, que presta <strong>serviços tecnológicos para clientes reais!</strong> São uma prévia do que pode ser o próximo capítulo da sua trajetória como desenvolvedor ou analista.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Botão de retorno -->
+    <button class="back-button" onclick="window.location.href='index.html'">
+        Início
+    </button>
+
+    <script>
+        // Animação suave ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.guilda-card');
+            
+            // Observador para animação quando elementos entram na viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 150);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // Configurar animação inicial
+            cards.forEach((card) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
